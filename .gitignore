@@ -1,0 +1,9 @@
+myenv
+terraform/malcom1.pem
+backend/*.sh
+frontend/node_modules
+terraform/dynamodbt/.terraform/
+**/.terraform
+**/.terraform.lock.hcl
+**/.terraform.tfstate
+**/.terraform.tfstate.backup
