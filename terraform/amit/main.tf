@@ -40,9 +40,6 @@
 provider "aws" {
   region = "us-east-1"
 }
-variable "amiid" {
-  default = file("../amiidoutput.txt")
-}
 
 # Read the output file
 data "local_file" "vpc_output" {
@@ -83,24 +80,26 @@ resource "aws_instance" "my_ec2" {
 # Step 2: Create AMI from the EC2 Instance (if create_ami=true)
 resource "aws_ami_from_instance" "my_ami" {
   count              = var.create_ami ? 1 : 0  # Only create AMI if variable is true
-  name               = var.amiid
+  name               = "myamiid"
   source_instance_id = aws_instance.my_ec2.id
 }
 
-# Step 3: Output the Public IP
+# Step 2: Output the Public IP
 output "ec2_public_ip" {
   value = aws_instance.my_ec2.public_ip
 }
 
+# Step 3: Output the AMI ID safely
 output "ami_id" {
-  value = aws_ami_from_instance.my_ami.id
+  value = length(aws_ami_from_instance.my_ami) > 0 ? aws_ami_from_instance.my_ami[0].id : "No AMI created"
 }
 
+# Step 3: Create a local file with the outputs
 resource "local_file" "ami_outputs" {
+  count    = var.create_ami ? 1 : 0  # Only create the file if AMI is being created
   content = <<EOT
-
 ec2_public_ip = ${aws_instance.my_ec2.public_ip}
-ami_id = ${aws_ami_from_instance.my_ami.id}
+ami_id = ${aws_ami_from_instance.my_ami[0].id}
 EOT
 
   filename = "../ami_output.txt"

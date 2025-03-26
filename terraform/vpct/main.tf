@@ -203,7 +203,9 @@ output "private_route_table_id" {
 #####################
 # Outputs to Single File
 #####################
-
+output "one" {
+  value = "done creation"
+}
 resource "local_file" "vpc_outputs" {
   content = <<EOT
 vpc_id = ${aws_vpc.my_vpc.id}
@@ -219,4 +221,7 @@ private_route_table_id = ${aws_route_table.private_rt.id}
 EOT
 
   filename = "../vpc_output.txt"
+}
+output "two" {
+  value = "done writing"
 }

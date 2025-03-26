@@ -99,10 +99,10 @@ resource "aws_launch_configuration" "my_launch_config" {
               # Add any user data scripts you want to run on instance startup
               cd archivep
               cd backend
-              source devenv.sh
+              source prodenv.sh
               flask --app=./app:app db migrate
               flask --app=./app:app db upgrade
-              Start the Flask server
+              # Start the Flask server
               echo "Starting Flask server..."
               python app.py
               EOF

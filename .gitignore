@@ -10,3 +10,4 @@ terraform/rdst/terraform.tfvars
 terraform/base_data.txt
 terraform/ami_data.txt
 terraform/vpc_output.txt
+terraform/outputfiles

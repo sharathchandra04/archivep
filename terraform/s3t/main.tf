@@ -27,4 +27,3 @@ output "rscmainb_arn" {
 output "rscarchiveb_arn" {
   value = aws_s3_bucket.rscarchiveb.arn
 }
-
