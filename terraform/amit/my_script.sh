@@ -18,9 +18,9 @@ cd $REPO_NAME/backend
 echo "Installing Python dependencies..."
 pip install -r requirements.txt
 
-source devenv.sh
-flask --app=./app:app db migrate
-flask --app=./app:app db upgrade
+# source devenv.sh
+# flask --app=./app:app db migrate
+# flask --app=./app:app db upgrade
 # Start the Flask server
-echo "Starting Flask server..."
-python app.py
+# echo "Starting Flask server..."
+# python app.py
