@@ -41,19 +41,39 @@ provider "aws" {
   region = "us-east-1"
 }
 variable "amiid" {
-  default = file("../output.txt")
+  default = file("../amiidoutput.txt")
 }
-output "myamiid" {
-  value = var.amiid
+
+# Read the output file
+data "local_file" "vpc_output" {
+  filename = "../vpc_output.txt"
 }
-# Step 1: Create EC2 Instance and Attach Existing Security Group
+data "local_file" "basedata" {
+  filename = "../base_data.txt"
+}
+
+# Parse the content of the file and extract values
+locals {
+  vpc_id                      = regex("vpc_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  public_subnet_1_id          = regex("public_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  public_subnet_2_id          = regex("public_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  private_subnet_1_id         = regex("private_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  private_subnet_2_id         = regex("private_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  security_group_id           = regex("sg1 = (\\S+)", data.local_file.basedata.content)[0]
+  base_ami                    = regex("bami = (\\S+)", data.local_file.basedata.content)[0]
+}
+
+######################
+# EC2 Instance and AMI
+######################
 resource "aws_instance" "my_ec2" {
-  ami           = "ami-084568db4383264d4"  # Replace with your base AMI ID, ubuntu
+  ami           = local.base_ami  # Replace with your base AMI ID
   instance_type = "t2.micro"
   key_name      = "malcom1"  # Replace with your actual key name
 
-  # Attach the existing security group by ID
-  vpc_security_group_ids = ["sg-00e59e101f2c39500"]  # Replace with your security group ID
+  vpc_security_group_ids = [local.security_group_id]  # Using the security group ID from the file
+
+  subnet_id = local.public_subnet_1_id  # Launching EC2 in the first public subnet
 
   tags = {
     Name = "MyInstance"
@@ -71,5 +91,20 @@ resource "aws_ami_from_instance" "my_ami" {
 output "ec2_public_ip" {
   value = aws_instance.my_ec2.public_ip
 }
+
+output "ami_id" {
+  value = aws_ami_from_instance.my_ami.id
+}
+
+resource "local_file" "ami_outputs" {
+  content = <<EOT
+
+ec2_public_ip = ${aws_instance.my_ec2.public_ip}
+ami_id = ${aws_ami_from_instance.my_ami.id}
+EOT
+
+  filename = "../ami_output.txt"
+}
+
 # terraform apply -var="create_ami=false" -auto-approve
 # terraform apply -var="create_ami=true" -auto-approve

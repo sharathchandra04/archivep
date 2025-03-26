@@ -2,6 +2,31 @@ provider "aws" {
   region = "us-east-1"
 }
 
+
+data "local_file" "basedata" {
+  filename = "../base_data.txt"
+}
+
+data "local_file" "ami_ouput" {
+  filename = "../ami_output.txt"
+}
+
+# Read VPC details from the output file
+data "local_file" "vpc_output" {
+  filename = "vpc_output.txt"
+}
+
+# Extract VPC and Subnet IDs from the output file
+locals {
+  vpc_id                  = regex("vpc_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  public_subnet_1_id      = regex("public_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  public_subnet_2_id      = regex("public_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  private_subnet_1_id     = regex("private_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  private_subnet_2_id     = regex("private_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  security_group_id       = regex("sg1 = (\\S+)",  data.local_file.basedata.content)[0]
+  ami_id                  = regex("ami_id = (\\S+)",  data.local_file.ami_ouput.content)[0]
+}
+
 #####################
 # IAM Roles & Policies
 #####################
@@ -187,6 +212,68 @@ resource "aws_lambda_function" "lambda4" {
   role           = aws_iam_role.lambda_role.arn
   filename       = "lambda4.zip"
   source_code_hash = filebase64sha256("lambda4.zip")
+}
+
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+
+
+resource "aws_lambda_function" "lambda1" {
+  function_name    = "lambda1"
+  runtime         = "python3.10"
+  handler         = "lambda_function.lambda_handler"
+  role            = aws_iam_role.lambda_role.arn
+  filename        = "lambda1.zip"
+  source_code_hash = filebase64sha256("lambda1.zip")
+
+  vpc_config {
+    subnet_ids         = [local.public_subnet_1_id, local.public_subnet_2_id] # Replace with your subnet IDs
+    security_group_ids = [local.security_group_id] # Replace with your security group ID
+  }
+}
+
+resource "aws_lambda_function" "lambda2" {
+  function_name    = "lambda2"
+  runtime         = "python3.10"
+  handler         = "lambda_function.lambda_handler"
+  role            = aws_iam_role.lambda_role.arn
+  filename        = "lambda2.zip"
+  source_code_hash = filebase64sha256("lambda2.zip")
+
+  vpc_config {
+    subnet_ids         = [local.public_subnet_1_id, local.public_subnet_2_id] # Replace with your subnet IDs
+    security_group_ids = [local.security_group_id] # Replace with your security group ID
+  }
+}
+
+resource "aws_lambda_function" "lambda3" {
+  function_name    = "lambda3"
+  runtime         = "python3.10"
+  handler         = "lambda_function.lambda_handler"
+  role            = aws_iam_role.lambda_role.arn
+  filename        = "lambda3.zip"
+  source_code_hash = filebase64sha256("lambda3.zip")
+
+  vpc_config {
+    subnet_ids         = [local.public_subnet_1_id, local.public_subnet_2_id] # Replace with your subnet IDs
+    security_group_ids = [local.security_group_id] # Replace with your security group ID
+  }
+}
+
+resource "aws_lambda_function" "lambda4" {
+  function_name    = "lambda4"
+  runtime         = "python3.10"
+  handler         = "lambda_function.lambda_handler"
+  role            = aws_iam_role.lambda_role.arn
+  filename        = "lambda4.zip"
+  source_code_hash = filebase64sha256("lambda4.zip")
+
+  vpc_config {
+    subnet_ids         = [local.public_subnet_1_id, local.public_subnet_2_id] # Replace with your subnet IDs
+    security_group_ids = [local.security_group_id] # Replace with your security group ID
+  }
 }
 
 #####################

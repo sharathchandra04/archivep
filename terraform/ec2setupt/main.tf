@@ -2,6 +2,30 @@ provider "aws" {
   region = "us-east-1" # Adjust to your region
 }
 
+data "local_file" "basedata" {
+  filename = "../base_data.txt"
+}
+
+data "local_file" "ami_ouput" {
+  filename = "../ami_output.txt"
+}
+
+# Read VPC details from the output file
+data "local_file" "vpc_output" {
+  filename = "vpc_output.txt"
+}
+
+# Extract VPC and Subnet IDs from the output file
+locals {
+  vpc_id                  = regex("vpc_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  public_subnet_1_id      = regex("public_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  public_subnet_2_id      = regex("public_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  private_subnet_1_id     = regex("private_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  private_subnet_2_id     = regex("private_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0]
+  security_group_id       = regex("sg1 = (\\S+)",  data.local_file.basedata.content)[0]
+  ami_id                  = regex("ami_id = (\\S+)",  data.local_file.ami_ouput.content)[0]
+}
+
 #####################
 # Load Balancer
 #####################
@@ -9,14 +33,10 @@ resource "aws_lb" "my_lb" {
   name               = "my-loadbalancer"
   internal           = false
   load_balancer_type = "application"
-  security_groups   = [] # Add your security groups here
-  subnets            = [
-    # Add the subnet IDs for your VPC here
-    "subnet-xxxxxxxx", # Replace with your subnet ID
-    "subnet-yyyyyyyy"  # Replace with your subnet ID
-  ]
+  security_groups   = [local.security_group_id] # Using security group from the output file
+  subnets            = [local.public_subnet_1_id, local.public_subnet_2_id]  # Using public subnets from the output file
 
-  enable_deletion_protection = false
+  enable_deletion_protection        = false
   enable_cross_zone_load_balancing = true
 
   tags = {
@@ -31,7 +51,7 @@ resource "aws_lb_target_group" "my_target_group" {
   name     = "my-target-group"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = "vpc-xxxxxxxx" # Replace with your VPC ID
+  vpc_id   = local.vpc_id  # Using VPC ID from the output file
 
   health_check {
     path                = "/"
@@ -65,14 +85,14 @@ resource "aws_lb_listener" "my_listener" {
 #####################
 resource "aws_launch_configuration" "my_launch_config" {
   name          = "my-launch-config"
-  image_id      = "ami-xxxxxxxxxxxxxxxxx" # Replace with your hardcoded AMI ID
+  image_id      = local.ami_id # Replace with your hardcoded AMI ID
   instance_type = "t2.micro" # Replace with your desired instance type
 
   lifecycle {
     create_before_destroy = true
   }
 
-  security_groups = [] # Add your security groups here
+  security_groups = [local.security_group_id] # Using security group from the output file
 
   user_data = <<-EOF
               #!/bin/bash
@@ -87,7 +107,7 @@ resource "aws_autoscaling_group" "my_asg" {
   desired_capacity     = 2
   max_size             = 5
   min_size             = 1
-  vpc_zone_identifier  = ["subnet-xxxxxxxx", "subnet-yyyyyyyy"] # Replace with your subnet IDs
+  vpc_zone_identifier  = [local.public_subnet_1_id, local.public_subnet_2_id] # Using public subnets from the output file
   launch_configuration = aws_launch_configuration.my_launch_config.id
   target_group_arns    = [aws_lb_target_group.my_target_group.arn]
 

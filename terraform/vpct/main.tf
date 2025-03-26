@@ -200,3 +200,23 @@ output "private_route_table_id" {
   value = aws_route_table.private_rt.id
 }
 
+#####################
+# Outputs to Single File
+#####################
+
+resource "local_file" "vpc_outputs" {
+  content = <<EOT
+vpc_id = ${aws_vpc.my_vpc.id}
+public_subnet_1_id = ${aws_subnet.public_subnet_1.id}
+public_subnet_2_id = ${aws_subnet.public_subnet_2.id}
+private_subnet_1_id = ${aws_subnet.private_subnet_1.id}
+private_subnet_2_id = ${aws_subnet.private_subnet_2.id}
+internet_gateway_id = ${aws_internet_gateway.igw.id}
+nat_gateway_id = ${aws_nat_gateway.nat_gw.id}
+elastic_ip_id = ${aws_eip.nat_eip.id}
+public_route_table_id = ${aws_route_table.public_rt.id}
+private_route_table_id = ${aws_route_table.private_rt.id}
+EOT
+
+  filename = "../vpc_output.txt"
+}
