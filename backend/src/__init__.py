@@ -9,13 +9,15 @@ from .config.config import DevelopmentConfig, ProductionConfig, Config
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from flask_bcrypt import Bcrypt
 # from flask_wtf.csrf import CSRFProtect
+from flask import send_from_directory
 
 
 bcrypt = None
 config_obj = None
 csrf = None
 def create_app():
-    app = Flask(__name__)
+    # app = Flask(__name__)
+    app = Flask(__name__, static_folder="build/static")
     global config_obj
     if os.environ.get('FLASK_ENV') == 'production' or True:
         app.config.from_object(ProductionConfig)
@@ -50,5 +52,10 @@ def create_app():
     app.register_blueprint(main_bp, url_prefix='/api/v1/main')
     app.register_blueprint(users_bp, url_prefix='/api/v1/users')
     app.register_blueprint(data_bp, url_prefix='/api/v1/data')
+
+    # Serve the static files (React build) from the build folder
+    @app.route('/')
+    def serve_react_app():
+        return send_from_directory('build', 'index.html')
 
     return app

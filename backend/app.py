@@ -3,6 +3,7 @@ from flask import jsonify, request
 
 app = create_app()
 
+
 @app.before_request
 def filter_request():
     # Get all cookies from the request
