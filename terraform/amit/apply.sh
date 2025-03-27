@@ -20,7 +20,7 @@ echo "finally done waiting"
 
 
 # Step 5: Copy the Password File & Script to the EC2 Instance
-scp -o StrictHostKeyChecking=no -i ~/archivep/terraform/malcom1.pem ../backend/prodenv.sh ubuntu@$INSTANCE_IP:/home/ubuntu/
+scp -o StrictHostKeyChecking=no -i ~/archivep/terraform/malcom1.pem ../../backend/prodenv.sh ubuntu@$INSTANCE_IP:/home/ubuntu/
 scp -o StrictHostKeyChecking=no -i ~/archivep/terraform/malcom1.pem bootstrap.sh ubuntu@$INSTANCE_IP:/home/ubuntu/
 
 echo "done 1"
@@ -34,4 +34,5 @@ echo "done 2"
 terraform apply -target=aws_ami_from_instance.my_ami -var="create_ami=true" -auto-approve
 echo "done 3"
 echo "AMI creation complete!"
-terraform output -raw my_output_variable > ../ami-id.txt
+# terraform output -raw my_output_variable > ../ami-id.txt
+[ -f ../ami_output.txt ] && cp ../ami_output.txt ../ouputfiles/ami_output_backup.txt

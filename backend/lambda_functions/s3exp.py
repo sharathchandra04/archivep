@@ -2,9 +2,9 @@ import boto3
 from botocore.exceptions import ClientError
 import os 
 S3_BUCKET = 'mbmar12'
-AWS_ACCESS_KEY = ''
-AWS_SECRET_KEY = '
 AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')
+AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
 
 s3_client = boto3.client(
     's3',

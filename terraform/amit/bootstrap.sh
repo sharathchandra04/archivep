@@ -1,21 +1,25 @@
 #!/bin/bash
 
-# Define the repository URL
 REPO_URL="https://github.com/sharathchandra04/archivep.git"
-
-# Clone the repository
-echo "Cloning repository..."
 git clone $REPO_URL
-
-# Get the repo name from the URL (assumes the repo name is the last part of the URL)
 REPO_NAME=$(basename $REPO_URL .git)
-
-# Navigate into the repo/backend directory
-echo "Navigating to $REPO_NAME/backend..."
-cd $REPO_NAME/backend
-
-# Install the required Python packages
-echo "Installing Python dependencies..."
+cd $REPO_NAME
+sudo apt update -y # y
+sudo apt install pip -y
+VENV_DIR="venv"
+if ! command -v python3 &> /dev/null; then
+    echo "Error: Python3 is not installed. Please install it and try again."
+    exit 1
+fi
+if [ ! -d "$VENV_DIR" ]; then
+    echo "Creating virtual environment in '$VENV_DIR'..."
+    sudo apt install python3-venv -y
+    python3 -m venv "$VENV_DIR"
+else
+    echo "Virtual environment already exists in '$VENV_DIR'."
+fi
+echo "Activating virtual environment..."
+source "$VENV_DIR/bin/activate"
 pip install -r requirements.txt
 
 # source devenv.sh
