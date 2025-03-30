@@ -10,12 +10,10 @@ data "local_file" "ami_ouput" {
   filename = "../ami_output.txt"
 }
 
-# Read VPC details from the output file
 data "local_file" "vpc_output" {
-  filename = "vpc_output.txt"
+  filename = "../vpc_output.txt"
 }
 
-# Extract VPC and Subnet IDs from the output file
 locals {
   vpc_id                  = regex("vpc_id = (\\S+)", data.local_file.vpc_output.content)[0]
   public_subnet_1_id      = regex("public_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0]
@@ -26,15 +24,12 @@ locals {
   ami_id                  = regex("ami_id = (\\S+)",  data.local_file.ami_ouput.content)[0]
 }
 
-#####################
-# Load Balancer
-#####################
 resource "aws_lb" "my_lb" {
   name               = "my-loadbalancer"
   internal           = false
   load_balancer_type = "application"
-  security_groups   = [local.security_group_id] # Using security group from the output file
-  subnets            = [local.public_subnet_1_id, local.public_subnet_2_id]  # Using public subnets from the output file
+  security_groups   = [local.security_group_id]
+  subnets            = [local.public_subnet_1_id, local.public_subnet_2_id]
 
   enable_deletion_protection        = false
   enable_cross_zone_load_balancing = true
@@ -44,14 +39,11 @@ resource "aws_lb" "my_lb" {
   }
 }
 
-#####################
-# Target Group (for Load Balancer)
-#####################
 resource "aws_lb_target_group" "my_target_group" {
   name     = "my-target-group"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = local.vpc_id  # Using VPC ID from the output file
+  vpc_id   = local.vpc_id
 
   health_check {
     path                = "/"
@@ -66,9 +58,6 @@ resource "aws_lb_target_group" "my_target_group" {
   }
 }
 
-#####################
-# Listener for Load Balancer
-#####################
 resource "aws_lb_listener" "my_listener" {
   load_balancer_arn = aws_lb.my_lb.arn
   port              = 80
@@ -80,43 +69,48 @@ resource "aws_lb_listener" "my_listener" {
   }
 }
 
-#####################
-# Launch Configuration (Using Hardcoded AMI)
-#####################
-resource "aws_launch_configuration" "my_launch_config" {
-  name          = "my-launch-config"
-  image_id      = local.ami_id # Replace with your hardcoded AMI ID
-  instance_type = "t2.micro" # Replace with your desired instance type
+resource "aws_launch_template" "my_launch_template" {
+  name          = "my-launch-template"
+  image_id      = local.ami_id
+  instance_type = "t2.micro"
+  key_name      = "malcom1"
+  vpc_security_group_ids = [local.security_group_id]
 
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  security_groups = [local.security_group_id] # Using security group from the output file
-
-  user_data = <<-EOF
+  user_data = base64encode(<<-EOF
               #!/bin/bash
-              # Add any user data scripts you want to run on instance startup
+              sudo apt install nginx -y
+              sudo systemctl start nginx
+              sudo systemctl enable nginx
               cd archivep
+              source venv/bin/activate
               cd backend
-              source prodenv.sh
+              source ../../prodenv.sh
+              echo "Starting Flask server..."
               flask --app=./app:app db migrate
               flask --app=./app:app db upgrade
-              # Start the Flask server
-              echo "Starting Flask server..."
               python app.py
               EOF
+  )
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "MyInstance"
+    }
+  }
 }
 
-#####################
-# Auto Scaling Group
-#####################
 resource "aws_autoscaling_group" "my_asg" {
-  desired_capacity     = 2
-  max_size             = 5
+  desired_capacity     = 1
+  max_size             = 3
   min_size             = 1
-  vpc_zone_identifier  = [local.public_subnet_1_id, local.public_subnet_2_id] # Using public subnets from the output file
-  launch_configuration = aws_launch_configuration.my_launch_config.id
+  vpc_zone_identifier  = [local.public_subnet_1_id, local.public_subnet_2_id]
+
+  launch_template {
+    id      = aws_launch_template.my_launch_template.id
+    version = "$Latest"
+  }
+
   target_group_arns    = [aws_lb_target_group.my_target_group.arn]
 
   health_check_type          = "ELB"
@@ -130,9 +124,6 @@ resource "aws_autoscaling_group" "my_asg" {
   }
 }
 
-#####################
-# Output ARNs
-#####################
 output "load_balancer_arn" {
   value = aws_lb.my_lb.arn
 }

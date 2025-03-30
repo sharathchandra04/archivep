@@ -1,0 +1,329 @@
+{
+  "version": 4,
+  "terraform_version": "1.10.5",
+  "serial": 178,
+  "lineage": "18a8e106-0ec1-c099-3187-386e8b6c40ed",
+  "outputs": {
+    "ami_id": {
+      "value": "ami-08770944d011ef7ae",
+      "type": "string"
+    },
+    "ec2_public_ip": {
+      "value": "34.238.240.110",
+      "type": "string"
+    },
+    "one": {
+      "value": "done creation",
+      "type": "string"
+    },
+    "two": {
+      "value": "done writing",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "local_file",
+      "name": "basedata",
+      "provider": "provider[\"registry.terraform.io/hashicorp/local\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "content": "sg1 = sg-0cdf9887f7661ffce\nsgdb = sg-00e59e101f2c39500\nbami = ami-084568db4383264d4",
+            "content_base64": "c2cxID0gc2ctMGNkZjk4ODdmNzY2MWZmY2UKc2dkYiA9IHNnLTAwZTU5ZTEwMWYyYzM5NTAwCmJhbWkgPSBhbWktMDg0NTY4ZGI0MzgzMjY0ZDQ=",
+            "content_base64sha256": "SAPSOdC4hJw+kTcNQ0ra6IVlMYU56gTg4+cfL6F4KQo=",
+            "content_base64sha512": "ssALRh4XxHpoz/cqUk/rm2zCp0uRHjfwDaRqdqARLGQrwfzwjvAw3Zfji9ka8j8RUxLdc4i6qwOZANFOeDW91A==",
+            "content_md5": "a135604cb0024aac6879f3e4e97b49ce",
+            "content_sha1": "208553f1d8367407bd5e2529069745a92987f86a",
+            "content_sha256": "4803d239d0b8849c3e91370d434adae88565318539ea04e0e3e71f2fa178290a",
+            "content_sha512": "b2c00b461e17c47a68cff72a524feb9b6cc2a74b911e37f00da46a76a0112c642bc1fcf08ef030dd97e38bd91af23f115312dd7388baab039900d14e7835bdd4",
+            "filename": "../base_data.txt",
+            "id": "208553f1d8367407bd5e2529069745a92987f86a"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "local_file",
+      "name": "vpc_output",
+      "provider": "provider[\"registry.terraform.io/hashicorp/local\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "content": "vpc_id = vpc-0004d1e94d97ceaea\npublic_subnet_1_id = subnet-0b277e9a2ac9ef50e\npublic_subnet_2_id = subnet-01c596c452946bb0d\nprivate_subnet_1_id = subnet-08a30f7a5d6271fd7\nprivate_subnet_2_id = subnet-0ffbe85d858bc3bbc\ninternet_gateway_id = igw-083d0b491e8f4ae4b\nnat_gateway_id = nat-00c708c79dd7edb2b\nelastic_ip_id = eipalloc-0a04631ad577af6a6\npublic_route_table_id = rtb-0fe4d61f7862801bf\nprivate_route_table_id = rtb-02d95951b5512331c\n",
+            "content_base64": "dnBjX2lkID0gdnBjLTAwMDRkMWU5NGQ5N2NlYWVhCnB1YmxpY19zdWJuZXRfMV9pZCA9IHN1Ym5ldC0wYjI3N2U5YTJhYzllZjUwZQpwdWJsaWNfc3VibmV0XzJfaWQgPSBzdWJuZXQtMDFjNTk2YzQ1Mjk0NmJiMGQKcHJpdmF0ZV9zdWJuZXRfMV9pZCA9IHN1Ym5ldC0wOGEzMGY3YTVkNjI3MWZkNwpwcml2YXRlX3N1Ym5ldF8yX2lkID0gc3VibmV0LTBmZmJlODVkODU4YmMzYmJjCmludGVybmV0X2dhdGV3YXlfaWQgPSBpZ3ctMDgzZDBiNDkxZThmNGFlNGIKbmF0X2dhdGV3YXlfaWQgPSBuYXQtMDBjNzA4Yzc5ZGQ3ZWRiMmIKZWxhc3RpY19pcF9pZCA9IGVpcGFsbG9jLTBhMDQ2MzFhZDU3N2FmNmE2CnB1YmxpY19yb3V0ZV90YWJsZV9pZCA9IHJ0Yi0wZmU0ZDYxZjc4NjI4MDFiZgpwcml2YXRlX3JvdXRlX3RhYmxlX2lkID0gcnRiLTAyZDk1OTUxYjU1MTIzMzFjCg==",
+            "content_base64sha256": "RDEVv3e/vN0N3+cYKO2hWxAGLm/IrHA6vN8akkKsImQ=",
+            "content_base64sha512": "uaoJQqIB9dTRExmtyng4CvCtSFfm+QuowD6/FoxdL/JkNi6acaREiGpuMDbupN5+yRoizjptBWc8iFh7Np4FHg==",
+            "content_md5": "5cd12fe38c5ffe7665b732c3b4be09de",
+            "content_sha1": "341ad6035afb96c6f1ce5f4fbf37f61a33c8b0ba",
+            "content_sha256": "443115bf77bfbcdd0ddfe71828eda15b10062e6fc8ac703abcdf1a9242ac2264",
+            "content_sha512": "b9aa0942a201f5d4d11319adca78380af0ad4857e6f90ba8c03ebf168c5d2ff264362e9a71a444886a6e3036eea4de7ec91a22ce3a6d05673c88587b369e051e",
+            "filename": "../vpc_output.txt",
+            "id": "341ad6035afb96c6f1ce5f4fbf37f61a33c8b0ba"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_ami_from_instance",
+      "name": "my_ami",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "architecture": "x86_64",
+            "arn": "arn:aws:ec2:us-east-1::image/ami-08770944d011ef7ae",
+            "boot_mode": "uefi-preferred",
+            "deprecation_time": "",
+            "description": "",
+            "ebs_block_device": [
+              {
+                "delete_on_termination": true,
+                "device_name": "/dev/sda1",
+                "encrypted": false,
+                "iops": 3000,
+                "outpost_arn": "",
+                "snapshot_id": "snap-0e2e9b1321978210b",
+                "throughput": 125,
+                "volume_size": 8,
+                "volume_type": "gp3"
+              }
+            ],
+            "ena_support": true,
+            "ephemeral_block_device": [
+              {
+                "device_name": "/dev/sdb",
+                "virtual_name": "ephemeral0"
+              },
+              {
+                "device_name": "/dev/sdc",
+                "virtual_name": "ephemeral1"
+              }
+            ],
+            "hypervisor": "xen",
+            "id": "ami-08770944d011ef7ae",
+            "image_location": "426672314667/myamiid",
+            "image_owner_alias": "",
+            "image_type": "machine",
+            "imds_support": "v2.0",
+            "kernel_id": "",
+            "manage_ebs_snapshots": true,
+            "name": "myamiid",
+            "owner_id": "426672314667",
+            "platform": "",
+            "platform_details": "Linux/UNIX",
+            "public": false,
+            "ramdisk_id": "",
+            "root_device_name": "/dev/sda1",
+            "root_snapshot_id": "snap-0e2e9b1321978210b",
+            "snapshot_without_reboot": null,
+            "source_instance_id": "i-055ce341d1f8ca18b",
+            "sriov_net_support": "simple",
+            "tags": null,
+            "tags_all": {},
+            "timeouts": null,
+            "tpm_support": "",
+            "uefi_data": null,
+            "usage_operation": "RunInstances",
+            "virtualization_type": "hvm"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAwLCJkZWxldGUiOjU0MDAwMDAwMDAwMDAsInVwZGF0ZSI6MjQwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_instance.my_ec2",
+            "data.local_file.basedata",
+            "data.local_file.vpc_output"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "my_ec2",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "ami": "ami-084568db4383264d4",
+            "arn": "arn:aws:ec2:us-east-1:426672314667:instance/i-055ce341d1f8ca18b",
+            "associate_public_ip_address": true,
+            "availability_zone": "us-east-1a",
+            "capacity_reservation_specification": [
+              {
+                "capacity_reservation_preference": "open",
+                "capacity_reservation_target": []
+              }
+            ],
+            "cpu_core_count": 1,
+            "cpu_options": [
+              {
+                "amd_sev_snp": "",
+                "core_count": 1,
+                "threads_per_core": 1
+              }
+            ],
+            "cpu_threads_per_core": 1,
+            "credit_specification": [
+              {
+                "cpu_credits": "standard"
+              }
+            ],
+            "disable_api_stop": false,
+            "disable_api_termination": false,
+            "ebs_block_device": [],
+            "ebs_optimized": false,
+            "enable_primary_ipv6": null,
+            "enclave_options": [
+              {
+                "enabled": false
+              }
+            ],
+            "ephemeral_block_device": [],
+            "get_password_data": false,
+            "hibernation": false,
+            "host_id": "",
+            "host_resource_group_arn": null,
+            "iam_instance_profile": "",
+            "id": "i-055ce341d1f8ca18b",
+            "instance_initiated_shutdown_behavior": "stop",
+            "instance_lifecycle": "",
+            "instance_market_options": [],
+            "instance_state": "running",
+            "instance_type": "t2.micro",
+            "ipv6_address_count": 0,
+            "ipv6_addresses": [],
+            "key_name": "malcom1",
+            "launch_template": [],
+            "maintenance_options": [
+              {
+                "auto_recovery": "default"
+              }
+            ],
+            "metadata_options": [
+              {
+                "http_endpoint": "enabled",
+                "http_protocol_ipv6": "disabled",
+                "http_put_response_hop_limit": 2,
+                "http_tokens": "required",
+                "instance_metadata_tags": "disabled"
+              }
+            ],
+            "monitoring": false,
+            "network_interface": [],
+            "outpost_arn": "",
+            "password_data": "",
+            "placement_group": "",
+            "placement_partition_number": 0,
+            "primary_network_interface_id": "eni-0fd115e05b78814a0",
+            "private_dns": "ip-10-0-1-223.ec2.internal",
+            "private_dns_name_options": [
+              {
+                "enable_resource_name_dns_a_record": false,
+                "enable_resource_name_dns_aaaa_record": false,
+                "hostname_type": "ip-name"
+              }
+            ],
+            "private_ip": "10.0.1.223",
+            "public_dns": "ec2-34-238-240-110.compute-1.amazonaws.com",
+            "public_ip": "34.238.240.110",
+            "root_block_device": [
+              {
+                "delete_on_termination": true,
+                "device_name": "/dev/sda1",
+                "encrypted": false,
+                "iops": 3000,
+                "kms_key_id": "",
+                "tags": {},
+                "tags_all": {},
+                "throughput": 125,
+                "volume_id": "vol-009e87edac73c2a7c",
+                "volume_size": 8,
+                "volume_type": "gp3"
+              }
+            ],
+            "secondary_private_ips": [],
+            "security_groups": [],
+            "source_dest_check": true,
+            "spot_instance_request_id": "",
+            "subnet_id": "subnet-0b277e9a2ac9ef50e",
+            "tags": {
+              "Name": "MyInstance"
+            },
+            "tags_all": {
+              "Name": "MyInstance"
+            },
+            "tenancy": "default",
+            "timeouts": null,
+            "user_data": null,
+            "user_data_base64": null,
+            "user_data_replace_on_change": false,
+            "volume_tags": null,
+            "vpc_security_group_ids": [
+              "sg-0cdf9887f7661ffce"
+            ]
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMCwicmVhZCI6OTAwMDAwMDAwMDAwLCJ1cGRhdGUiOjYwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "data.local_file.basedata",
+            "data.local_file.vpc_output"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "local_file",
+      "name": "ami_outputs",
+      "provider": "provider[\"registry.terraform.io/hashicorp/local\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "content": "ec2_public_ip = 34.238.240.110\nami_id = ami-08770944d011ef7ae\n",
+            "content_base64": null,
+            "content_base64sha256": "cVaIlciKkRwO9zDG3JSk3UHplebr8q2UyOhKOpPzkB8=",
+            "content_base64sha512": "s1hjvfSrTOKttYmws7/LJfmR2SlC2ljBt3PTMYnTBOwPZFWxo5M+it+9eUNQwl/zGr05J6PfM7pJyAFemXWFJA==",
+            "content_md5": "8f39110f07f2af44b14602d6e7c057a0",
+            "content_sha1": "97ca00122b10b3d6d569ef479031927b3834e5a0",
+            "content_sha256": "71568895c88a911c0ef730c6dc94a4dd41e995e6ebf2ad94c8e84a3a93f3901f",
+            "content_sha512": "b35863bdf4ab4ce2adb589b0b3bfcb25f991d92942da58c1b773d33189d304ec0f6455b1a3933e8adfbd794350c25ff31abd3927a3df33ba49c8015e99758524",
+            "directory_permission": "0777",
+            "file_permission": "0777",
+            "filename": "../ami_output.txt",
+            "id": "97ca00122b10b3d6d569ef479031927b3834e5a0",
+            "sensitive_content": null,
+            "source": null
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "sensitive_content"
+              }
+            ]
+          ],
+          "dependencies": [
+            "aws_ami_from_instance.my_ami",
+            "aws_instance.my_ec2",
+            "data.local_file.basedata",
+            "data.local_file.vpc_output"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

@@ -31,8 +31,13 @@ ssh -o StrictHostKeyChecking=no -i ~/archivep/terraform/malcom1.pem ubuntu@$INST
 
 echo "done 2"
 # Step 7: Create an AMI using Terraform
-terraform apply -target=aws_ami_from_instance.my_ami -var="create_ami=true" -auto-approve
+terraform apply -target=aws_ami_from_instance.my_ami -target=local_file.ami_outputs -var="create_ami=true" -auto-approve
 echo "done 3"
 echo "AMI creation complete!"
 # terraform output -raw my_output_variable > ../ami-id.txt
 [ -f ../ami_output.txt ] && cp ../ami_output.txt ../ouputfiles/ami_output_backup.txt
+
+echo "finally it is done"
+terraform state rm aws_ami_from_instance.my_ami
+terraform destroy -target=aws_instance.my_ec2 -auto-approve -var="create_ami=false"
+echo "terminated instance"

@@ -1,5 +1,6 @@
 from src import create_app
 from flask import jsonify, request
+import os
 
 app = create_app()
 
@@ -18,4 +19,10 @@ def filter_request():
     pass
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if os.environ.get('FLASK_ENV') == 'production':
+        # app.config.from_object(ProductionConfig)
+        # config_obj = ProductionConfig
+        app.run(host='0.0.0.0', port=5000, debug=True)
+
+    else:
+        app.run(debug=True)

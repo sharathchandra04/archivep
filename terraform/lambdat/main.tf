@@ -13,7 +13,7 @@ data "local_file" "ami_ouput" {
 
 # Read VPC details from the output file
 data "local_file" "vpc_output" {
-  filename = "vpc_output.txt"
+  filename = "../vpc_output.txt"
 }
 
 # Extract VPC and Subnet IDs from the output file
@@ -147,6 +147,26 @@ resource "aws_iam_policy" "lambda_sqs_policy" {
 EOF
 }
 
+resource "aws_iam_policy" "lambda_vpc_policy" {
+  name   = "lambda_vpc_policy"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteNetworkInterface"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 # Attach SQS Policy to Lambda1's IAM Role
 resource "aws_iam_role_policy_attachment" "lambda1_sqs_policy_attach" {
   role       = aws_iam_role.lambda_role.name
@@ -174,52 +194,13 @@ resource "aws_iam_role_policy_attachment" "lambda4_policy_attach" {
   policy_arn = aws_iam_policy.lambda_invoke_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_vpc_policy_attachment" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.lambda_vpc_policy.arn
+}
 #####################
 # Create Lambda Functions
 #####################
-
-resource "aws_lambda_function" "lambda1" {
-  function_name    = "lambda1"
-  runtime         = "python3.10"
-  handler         = "lambda_function.lambda_handler"
-  role           = aws_iam_role.lambda_role.arn
-  filename       = "lambda1.zip"
-  source_code_hash = filebase64sha256("lambda1.zip")
-}
-
-resource "aws_lambda_function" "lambda2" {
-  function_name    = "lambda2"
-  runtime         = "python3.10"
-  handler         = "lambda_function.lambda_handler"
-  role           = aws_iam_role.lambda_role.arn
-  filename       = "lambda2.zip"
-  source_code_hash = filebase64sha256("lambda2.zip")
-}
-
-resource "aws_lambda_function" "lambda3" {
-  function_name    = "lambda3"
-  runtime         = "python3.10"
-  handler         = "lambda_function.lambda_handler"
-  role           = aws_iam_role.lambda_role.arn
-  filename       = "lambda3.zip"
-  source_code_hash = filebase64sha256("lambda3.zip")
-}
-
-resource "aws_lambda_function" "lambda4" {
-  function_name    = "lambda4"
-  runtime         = "python3.10"
-  handler         = "lambda_function.lambda_handler"
-  role           = aws_iam_role.lambda_role.arn
-  filename       = "lambda4.zip"
-  source_code_hash = filebase64sha256("lambda4.zip")
-}
-
-# -----------------------------------------------------------------
-# -----------------------------------------------------------------
-# -----------------------------------------------------------------
-# -----------------------------------------------------------------
-
-
 resource "aws_lambda_function" "lambda1" {
   function_name    = "lambda1"
   runtime         = "python3.10"

@@ -110,8 +110,11 @@ how to setup lambda functions using terraform along with envireonment variables
 
 
 docker run --name my_postgres_container -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 postgres
-
-
-
+docker exec -it my_postgres_container psql -U postgres
+psql -h localhost -U postgres -d postgres
+CREATE DATABASE archivep;
+\l
 
 1. security groups --> . we need a security group of a particular vpc only. 
+
+

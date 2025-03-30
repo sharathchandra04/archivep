@@ -52,12 +52,32 @@ def insert_multiple_items(items):
     except ClientError as e:
         print(f"Error inserting items: {e}")
 
-# def restore():
-#     folder_name = request.json.get('name')
-#     current_user = get_jwt_identity()
-#     files = list_files_in_s3(S3_BUCKET, f"{current_user}/{folder_name}")
-#     items = [{'id1': f, 'user': current_user, 'folder': folder_name, 'restore_initiated': False} for f in files]
-#     insert_multiple_items(items)
+def get_signed_url(key):
+    """Generate a signed URL for accessing an S3 object."""
+    return s3_client.generate_presigned_url(
+        "get_object",
+        Params={"Bucket": S3_BUCKET, "Key": key},
+        ExpiresIn=3600  # 1 hour expiry
+    )
+
+@data_bp.route("/get_images", methods=["GET"])
+def get_images():
+    BUCKET_NAME = S3_BUCKET
+    """Fetch images from S3 with pagination."""
+    try:
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 2))
+        response = s3_client.list_objects_v2(Bucket=BUCKET_NAME)
+        if "Contents" not in response:
+            return jsonify({"message": "No images found"}), 404
+        all_files = [obj["Key"] for obj in response["Contents"]]
+        start_index = (page - 1) * limit
+        end_index = start_index + limit
+        paginated_files = all_files[start_index:end_index]
+        signed_urls = [get_signed_url(key) for key in paginated_files]
+        return jsonify({"images": signed_urls, "page": page, "limit": limit, "total_images": len(all_files)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @data_bp.route('/restore', methods=['POST'])
 @jwt_required()

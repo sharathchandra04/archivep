@@ -13,7 +13,7 @@ data "local_file" "ami_output" {
 
 # Reading VPC details from the output file
 data "local_file" "vpc_output" {
-  filename = "vpc_output.txt"
+  filename = "../vpc_output.txt"
 }
 
 # Extract VPC and Subnet IDs, and other information using regex
@@ -23,7 +23,7 @@ locals {
   public_subnet_2_id      = regex("public_subnet_2_id = (\\S+)", data.local_file.vpc_output.content) != [] ? regex("public_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0] : null
   private_subnet_1_id     = regex("private_subnet_1_id = (\\S+)", data.local_file.vpc_output.content) != [] ? regex("private_subnet_1_id = (\\S+)", data.local_file.vpc_output.content)[0] : null
   private_subnet_2_id     = regex("private_subnet_2_id = (\\S+)", data.local_file.vpc_output.content) != [] ? regex("private_subnet_2_id = (\\S+)", data.local_file.vpc_output.content)[0] : null
-  security_group_id       = regex("sgdb = (\\S+)", data.local_file.basedata.content) != [] ? regex("sg1 = (\\S+)", data.local_file.basedata.content)[0] : null
+  security_group_id       = regex("sgdb = (\\S+)", data.local_file.basedata.content) != [] ? regex("sgdb = (\\S+)", data.local_file.basedata.content)[0] : null
   ami_id                  = regex("ami_id = (\\S+)", data.local_file.ami_output.content) != [] ? regex("ami_id = (\\S+)", data.local_file.ami_output.content)[0] : null
 }
 
@@ -51,7 +51,7 @@ variable "db_name" {
 resource "aws_db_instance" "postgres_rds" {
   identifier            = "mypostgres-db"
   engine                = "postgres"
-  engine_version        = "15.3"
+  engine_version        = "15.9"
   instance_class        = "db.t3.micro"
   allocated_storage     = 20
   max_allocated_storage = 100
@@ -62,7 +62,7 @@ resource "aws_db_instance" "postgres_rds" {
   password             = var.db_password
   parameter_group_name = "default.postgres15"
   
-  publicly_accessible  = false
+  publicly_accessible  = true
   skip_final_snapshot  = true
   
   vpc_security_group_ids = [local.security_group_id]
@@ -101,7 +101,7 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_db_subnet_group" "postgres_subnet_group" {
   name        = "postgres-subnet-group"
   description = "Subnet group for RDS PostgreSQL instance"
-  subnet_ids  = [local.private_subnet_1_id, local.private_subnet_2_id]
+  subnet_ids  = [local.public_subnet_1_id, local.public_subnet_2_id]
 }
 
 #####################

@@ -14,9 +14,9 @@ const FileUploadComponent = (a) => {
   const [failureCount, setFailureCount] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0); // Progress for each file upload
 
-  useEffect(() => {
-    console.log('a ----> ', a, state)
-  }, [])
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const pageSize = 2;
   const handleFileSelect = (event) => {
     setSelectedFiles(event.target.files);
   };
@@ -70,13 +70,24 @@ const FileUploadComponent = (a) => {
       // Update progress
       setUploadProgress(((i + 1) / totalFiles) * 100);
     }
-
     setUploading(false); // Set uploading to false after all files are processed
   };
 
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/v1/data/getimages?page=${page}&limit=4`);
+        const data = await response.json();
+        setImages(data.images);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+    fetchImages();
+  }, [page]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%' }}>
-      {/* Left side part (25%) */}
       <Box sx={{ width: '25%', padding: '20px', borderRight: '1px solid #ddd' }}>
         <Typography variant="h6" sx={{ marginBottom: '10px' }}>
           Upload Files
@@ -120,11 +131,17 @@ const FileUploadComponent = (a) => {
           sx={{ marginTop: '20px' }}
         />
       </Box>
-
-      {/* Right side part (75%) - Empty for now */}
       <Box sx={{ width: '75%', padding: '20px' }}>
-        {/* You can add additional content here */}
         <Typography variant="h6">File Upload Progress</Typography>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "10px" }}>
+          {images.map((url, index) => (
+            <img key={index} src={url} alt={`S3 Img ${index}`} width="150px" height="150px" style={{ borderRadius: "10px" }} />
+          ))}
+        </Box>
+        <Box sx={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+          <Button disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</Button>
+          <Button onClick={() => setPage(page + 1)}>Next</Button>
+        </Box>
       </Box>
     </Box>
   );

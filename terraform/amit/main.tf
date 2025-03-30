@@ -94,6 +94,10 @@ output "ami_id" {
   value = length(aws_ami_from_instance.my_ami) > 0 ? aws_ami_from_instance.my_ami[0].id : "No AMI created"
 }
 
+output "one" {
+  value = "done creation"
+}
+
 # Step 3: Create a local file with the outputs
 resource "local_file" "ami_outputs" {
   count    = var.create_ami ? 1 : 0  # Only create the file if AMI is being created
@@ -103,6 +107,9 @@ ami_id = ${aws_ami_from_instance.my_ami[0].id}
 EOT
 
   filename = "../ami_output.txt"
+}
+output "two" {
+  value = "done writing"
 }
 
 # terraform apply -var="create_ami=false" -auto-approve
