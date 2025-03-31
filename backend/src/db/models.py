@@ -16,6 +16,7 @@ class Folder(db.Model):
     name = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     asset_count = db.Column(db.Integer, default=0)  # The number of assets in the folder
+    restored_asset_count = db.Column(db.Integer, default=0)
     size = db.Column(db.Integer, default=0)  # Total size of assets in the folder (in bytes)
     is_deleted = db.Column(db.Boolean, default=False)  # Whether the folder is deleted
     is_archived = db.Column(db.Boolean, default=False)  # Whether the folder is archived

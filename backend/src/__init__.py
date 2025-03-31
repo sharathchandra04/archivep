@@ -54,8 +54,11 @@ def create_app():
     app.register_blueprint(data_bp, url_prefix='/api/v1/data')
 
     # Serve the static files (React build) from the build folder
-    @app.route('/')
-    def serve_react_app():
-        return send_from_directory('build', 'index.html')
+    # @app.route('/')
+    # @app.route("/<path:path>")
+    # def serve_react_app(path=""):
+    #     if path.startswith("api/"):  # Avoid redirecting API calls
+    #         return "API route not found", 404
+    #     return send_from_directory('build', 'index.html')
 
     return app

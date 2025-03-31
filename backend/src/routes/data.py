@@ -64,10 +64,12 @@ def get_signed_url(key):
 def get_images():
     BUCKET_NAME = S3_BUCKET
     """Fetch images from S3 with pagination."""
+    print('inside api call.')
     try:
         page = int(request.args.get("page", 1))
         limit = int(request.args.get("limit", 2))
         response = s3_client.list_objects_v2(Bucket=BUCKET_NAME)
+        print(response)
         if "Contents" not in response:
             return jsonify({"message": "No images found"}), 404
         all_files = [obj["Key"] for obj in response["Contents"]]
@@ -77,6 +79,7 @@ def get_images():
         signed_urls = [get_signed_url(key) for key in paginated_files]
         return jsonify({"images": signed_urls, "page": page, "limit": limit, "total_images": len(all_files)})
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 @data_bp.route('/restore', methods=['POST'])
@@ -162,9 +165,6 @@ def archive():
 def protected():
     current_user = get_jwt_identity()  # Get the user ID from the JWT
     return jsonify(logged_in_as=current_user), 200
-
-
-
 
 def get_dynamodb_folders(user_id):
     table_name = 'folders'
@@ -256,6 +256,7 @@ def create_folder():
                 'isarchived': False
             }
         )
+        pass
     except Exception as e:
         print(e)
         return jsonify({"msg": "Error saving to DynamoDB", "error": str(e)}), 500
@@ -288,48 +289,3 @@ def delete_folder(folder_id):
         'msg': 'Folder deleted successfully',
         'folder': {'id': folder.id, 'name': folder.name, 'is_deleted': folder.is_deleted}
     }), 200
-
-
-'''
-i have a dynamodb table now i want read each record based on the inserted time. fisrt come first server.
-do the following
-read the row (last_inserted and restore initiated field is False )
-the record has a path key
-read the path 
-from a bucket called sharathmayarchive, restore the object at the given path.
-now update the same row as restore _initiated as true
-------------------------------------
-
-read record whre restore initiated is true 
-extract path of the object
-read the head of the object with the path(s3 key) from the bucket.
-if the object is restored delete the record from dynamodb table
-check if restored by fetching the Restore='' field in the head object of the s3 object.
-else do nothing
-if the restore is in progress do nothing
-if the restore is finished delete the record of the dynamodb
-then,
------
-1. copy the restore object from the bucket to a destination bucket as a standard class
-
-
-
-2. update the postgres count
-3. if the restoore count == 0 send an sns notification. 
-
-if the restore field is not present, and still  restore initiated is true then update the restore initiated to false .
-
-
-
-connect to the postgres table called folders and decrese the count called pending_restored by one
-if the pending restored becomes zero after the updation , push an event into an sqs queue saying "a folder is restored"
-
-
------------------------------
-
-
-
-
-'''
-
-

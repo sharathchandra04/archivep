@@ -76,7 +76,7 @@ const FileUploadComponent = (a) => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/v1/data/getimages?page=${page}&limit=4`);
+        const response = await fetch(`http://localhost:5000/api/v1/data/get_images?page=${page}&limit=2`);
         const data = await response.json();
         setImages(data.images);
       } catch (error) {
@@ -134,7 +134,7 @@ const FileUploadComponent = (a) => {
       <Box sx={{ width: '75%', padding: '20px' }}>
         <Typography variant="h6">File Upload Progress</Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "10px" }}>
-          {images.map((url, index) => (
+          {images && images.map((url, index) => (
             <img key={index} src={url} alt={`S3 Img ${index}`} width="150px" height="150px" style={{ borderRadius: "10px" }} />
           ))}
         </Box>
